@@ -75,7 +75,7 @@
       <input type="text" id="inp-ref" placeholder="e.g. GMC speaker, creator, attendee" />
     </div>
 
-    <button class="wa-btn" id="wa-btn" onclick="handleSubmit()">
+    <button class="wa-btn" onclick="handleSubmit()">
       <i class="fab fa-whatsapp"></i>
       Connect via WhatsApp
     </button>
@@ -106,11 +106,11 @@ I'm Ali from Human Appeal Australia. We've been delivering humanitarian aid and 
 
 We're actively looking to collaborate with purpose-driven creators who want their content to create real-world impact from Gaza and Pakistan to Sudan and beyond.
 
-🌐Website - humanappeal.org.au
-📲 Instagram - @humanappealaustralia
-📧Email - info@humanappeal.org.au
+🌐 humanappeal.org.au
+📲 @humanappealaustralia
+📧 alik@humanappeal.org.au
 
-I'd love to catch-up with you to explore how we can work together. When works best for you?
+I'll be in touch soon to arrange a time to catch up.
 
 JazakAllah Khair 🤲`;
   }
@@ -128,13 +128,13 @@ JazakAllah Khair 🤲`;
     }
     phoneError.style.display = 'none';
 
-    // Open WhatsApp instantly — no waiting
+    // Open WhatsApp instantly
     const msg = buildMessage(name, org);
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
     document.getElementById('success-box').style.display = 'block';
 
-    // Save to Google Sheet in background — non-blocking
+    // Save to Google Sheet in background
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
