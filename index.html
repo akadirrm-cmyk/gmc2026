@@ -70,8 +70,12 @@
       <label>Organisation / Social handle (optional)</label>
       <input type="text" id="inp-org" placeholder="e.g. @yourchannel or Organisation name" />
     </div>
+    <div class="field">
+      <label>Reference</label>
+      <input type="text" id="inp-ref" placeholder="e.g. GMC speaker, creator, attendee" />
+    </div>
 
-    <button class="wa-btn" onclick="handleSubmit()">
+    <button class="wa-btn" id="wa-btn" onclick="handleSubmit()">
       <i class="fab fa-whatsapp"></i>
       Connect via WhatsApp
     </button>
@@ -94,26 +98,28 @@
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2c9ATTgMGCV3l9ZLIJkfVUa0FdddPTov3orlgTwPZxv_4Q95-Cy2jjgYB3fxfX6gTEg/exec';
 
   function buildMessage(name, org) {
-    const greeting = name ? `Assalamu Alaikum ${name}!` : 'Assalamu Alaikum!';
-    const orgLine = org ? ` from ${org}` : '';
-    return `${greeting} It was wonderful connecting with you${orgLine} at GMC 2026! 🌟
+    const nameStr = name ? name : 'there';
+    const orgStr = org ? ` from ${org}` : '';
+    return `Assalamu Alaikum ${nameStr}! It was wonderful connecting with you${orgStr} at GMC 2026! 🌟
 
-I'm Ali from *Human Appeal International Australia* — we've been delivering humanitarian aid and development programs across 30+ countries for over 35 years, reaching more than 3 million lives.
+I'm Ali from Human Appeal Australia. We've been delivering humanitarian aid and development programs across 30+ countries for over 35 years, reaching more than 3 million lives.
 
-We're actively looking to collaborate with purpose-driven creators who want their content to create real-world impact — from Gaza and Pakistan to Sudan and beyond.
+We're actively looking to collaborate with purpose-driven creators who want their content to create real-world impact from Gaza and Pakistan to Sudan and beyond.
 
-🌐 humanappeal.org.au
-📲 @humanappealaustralia
+🌐Website - humanappeal.org.au
+📲 Instagram - @humanappealaustralia
+📧Email - info@humanappeal.org.au
 
-I'd love to set up a quick 15-minute call to explore how we can work together. When works best for you?
+I'd love to catch-up with you to explore how we can work together. When works best for you?
 
 JazakAllah Khair 🤲`;
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const name = document.getElementById('inp-name').value.trim();
     const phone = document.getElementById('inp-phone').value.replace(/\D/g, '');
     const org = document.getElementById('inp-org').value.trim();
+    const ref = document.getElementById('inp-ref').value.trim();
     const phoneError = document.getElementById('phone-error');
 
     if (!phone || phone.length < 8) {
@@ -122,21 +128,19 @@ JazakAllah Khair 🤲`;
     }
     phoneError.style.display = 'none';
 
-    // Save to Google Sheet
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone: '+' + phone, org })
-      });
-    } catch(e) { console.log('Sheet log error', e); }
-
-    // Open WhatsApp
+    // Open WhatsApp instantly — no waiting
     const msg = buildMessage(name, org);
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
     document.getElementById('success-box').style.display = 'block';
+
+    // Save to Google Sheet in background — non-blocking
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone: '+' + phone, org, ref })
+    }).catch(e => console.log('Sheet log error', e));
   }
 </script>
 </body>
